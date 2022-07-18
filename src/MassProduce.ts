@@ -14,13 +14,15 @@ export class MassProduce {
     this.variables = this.extractVariables();
   }
 
-  public run() {
-    console.log(this.variables);
-    const populated = this.populateVariables();
-    console.log(populated);
-    spawn("bash", ["-c", this.script], {
-      stdio: "inherit",
-      env: this.populateVariables(),
+  public async run() {
+    return new Promise<void>((fulfil, reject) => {
+      const populated = this.populateVariables();
+      const p = spawn("bash", ["-c", this.script], {
+        stdio: "inherit",
+        env: this.populateVariables(),
+      });
+      p.on("close", () => fulfil());
+      p.on("error", (err) => reject(err));
     });
   }
 
