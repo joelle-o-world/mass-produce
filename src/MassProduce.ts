@@ -16,7 +16,6 @@ export class MassProduce {
 
   public async run() {
     return new Promise<void>((fulfil, reject) => {
-      const populated = this.populateVariables();
       const p = spawn("bash", ["-c", this.script], {
         stdio: "inherit",
         env: this.populateVariables(),
@@ -33,7 +32,7 @@ export class MassProduce {
   }
 
   static variablePattern() {
-    return /\$M([A\Za-z]+)(?:_?(\d+))?/g;
+    return /\$varying(?:_)?([A-Za-z]+)(?:_?(\d+))?/g;
   }
 
   private extractVariables() {
@@ -47,7 +46,7 @@ export class MassProduce {
   private static parseVariable(str: string) {
     const result = MassProduce.variablePattern().exec(str);
     if (result) {
-      const type = result[1];
+      const type = result[1].toLowerCase();
       const generate = generators[type];
       if (!generate)
         throw new Error("No generator available for type: " + type);
@@ -57,6 +56,10 @@ export class MassProduce {
         generate,
       };
     } else throw "Cannot parse variable: " + str;
+  }
+
+  public numberOfVariables(): number {
+    return this.variables.length;
   }
 
   public static fromFile(path: string): Promise<MassProduce> {
