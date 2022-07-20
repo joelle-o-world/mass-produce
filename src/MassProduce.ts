@@ -1,9 +1,7 @@
 import fs from "fs";
 import { spawn } from "child_process";
-
-const generators: { [type: string]: () => string } = {
-  frequency: () => `${Math.round(Math.random() * 20000 + 20)}Hz`,
-};
+import YAML from "yaml";
+import { generators } from "./generators";
 
 export class MassProduce {
   private script: string;
@@ -14,11 +12,16 @@ export class MassProduce {
     this.variables = this.extractVariables();
   }
 
-  public async run() {
+  public async run(extraVariables: { [key: string]: string }) {
     return new Promise<void>((fulfil, reject) => {
+      const variables = { ...this.populateVariables(), ...extraVariables };
+
+      // TODO: Move this line to CLI
+      console.log(YAML.stringify(variables));
+
       const p = spawn("bash", ["-c", this.script], {
         stdio: "inherit",
-        env: this.populateVariables(),
+        env: { ...process.env, ...variables },
       });
       p.on("close", () => fulfil());
       p.on("error", (err) => reject(err));

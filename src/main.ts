@@ -7,10 +7,10 @@ import { MassProduce } from "./MassProduce";
   const instance = await MassProduce.fromFile(scriptFile);
   console.log("Found", instance.numberOfVariables(), "varying variables");
 
-  const iterations = process.argv[3] || 1;
-  for (let i = 0; i < iterations; ++i) {
-    console.log("Run #" + i);
-    await instance.run();
-    console.log(`End of run #${i}\n`);
+  const iterations = Number(process.argv[3] || 1);
+  for (let i = 1; i < iterations + 1; ++i) {
+    console.log("|- Run #" + i + "\n");
+    await instance.run({ iteration: String(i) });
+    console.log(`\n|- End of run #${i}\n`);
   }
 })();
