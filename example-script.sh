@@ -1,4 +1,3 @@
-echo "first: $varying_frequency"
-echo "second: $varyingFrequency"
-echo "third: $varyingFrequency2"
-echo "4th: $varying_frequency3"
+#! /bin/bash
+
+echo "Hark! I hear a dove, singing at $varying_frequency1 Hertz!"
